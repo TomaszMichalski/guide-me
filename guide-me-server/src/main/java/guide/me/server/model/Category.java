@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -22,6 +23,10 @@ public class Category {
 
     public Category() {
         //
+    }
+
+    public Category(String name) {
+        this.name = name;
     }
 
     public Long getId() {
@@ -46,6 +51,14 @@ public class Category {
 
     public void setPlaces(Set<Place> places) {
         this.places = places;
+    }
+
+    public void addPlace(Place place) {
+        if (places == null) {
+            places = new HashSet<>();
+        }
+
+        places.add(place);
     }
 
     @Override

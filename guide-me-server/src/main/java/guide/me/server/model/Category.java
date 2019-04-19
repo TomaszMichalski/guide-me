@@ -4,8 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.util.List;
+import javax.persistence.OneToMany;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Category {
@@ -16,7 +17,8 @@ public class Category {
 
     private String name;
 
-    private List<Place> places;
+    @OneToMany(mappedBy = "category")
+    private Set<Place> places;
 
     public Category() {
         //
@@ -38,11 +40,11 @@ public class Category {
         this.name = name;
     }
 
-    public List<Place> getPlaces() {
+    public Set<Place> getPlaces() {
         return places;
     }
 
-    public void setPlaces(List<Place> places) {
+    public void setPlaces(Set<Place> places) {
         this.places = places;
     }
 

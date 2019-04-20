@@ -21,8 +21,8 @@ public class MapQuestDistanceProvider implements DistanceProvider {
     private static final String TO = "&to=";
 
     @Override
-    public String getDistance(String addressFrom, String addressTo) {
-        String distance = null;
+    public Double getDistance(String addressFrom, String addressTo) {
+        Double distance = null;
 
         try {
             URL requestUrl = new URL(buildRequestUrl(addressFrom, addressTo));
@@ -39,7 +39,7 @@ public class MapQuestDistanceProvider implements DistanceProvider {
 
             JSONObject jsonResponse = new JSONObject(responseBuilder.toString());
 
-            distance = jsonResponse.getJSONObject("route").getString("distance");
+            distance = jsonResponse.getJSONObject("route").getDouble("distance");
 
             connection.disconnect();
         } catch (IOException e) {

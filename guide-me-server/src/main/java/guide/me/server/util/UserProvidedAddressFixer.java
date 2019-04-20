@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserProvidedAddressFixer {
 
-    private static final String SUFFIX = ", Kraków, PL";
+    private static final String SUFFIX = ", Krakow, PL";
 
     public String getFixedAddress(String address) {
         if (address == null) {

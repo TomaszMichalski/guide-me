@@ -6,9 +6,9 @@ public class Distance {
 
     private Place placeTo;
 
-    private String distance;
+    private Double distance;
 
-    public Distance(String addressFrom, Place placeTo, String distance) {
+    public Distance(String addressFrom, Place placeTo, Double distance) {
         this.addressFrom = addressFrom;
         this.placeTo = placeTo;
         this.distance = distance;
@@ -22,7 +22,7 @@ public class Distance {
         return placeTo;
     }
 
-    public String getDistance() {
+    public Double getDistance() {
         return distance;
     }
 }

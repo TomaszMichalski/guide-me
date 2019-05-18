@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
 public class PlacesController {
 
     @Autowired
@@ -21,19 +20,9 @@ public class PlacesController {
     @Autowired
     private PlaceRepository placeRepository;
 
-    @GetMapping("/places")
-    public Iterable<Place> allPlaces() {
-        return placeRepository.findAll();
-    }
-
     @PostMapping("/places")
     public Place createPlace(@RequestBody Place place) {
         return placeRepository.save(place);
-    }
-
-    @GetMapping("/categories")
-    public Iterable<Category> allCategories() {
-        return categoryRepository.findAll();
     }
 
     @PostMapping("/categories")

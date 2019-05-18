@@ -47,7 +47,7 @@ class App extends React.Component {
 
     componentDidMount() {
         client({method: 'GET', path: '/api/places'}).done(response => {
-            this.setState({places: response.entity._embedded.places});
+            this.setState({places: response.entity.places});
         });
     }
 

@@ -29,7 +29,7 @@ public class PlacesController {
         Place savedPlace = placeRepository.save(place);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
+                .path("/api/{id}")
                 .buildAndExpand(savedPlace.getId()).toUri();
 
         return ResponseEntity.created(location).build();
@@ -40,7 +40,7 @@ public class PlacesController {
         Category savedCategory = categoryRepository.save(category);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
+                .path("/api/{id}")
                 .buildAndExpand(savedCategory.getId()).toUri();
 
         return ResponseEntity.created(location).build();

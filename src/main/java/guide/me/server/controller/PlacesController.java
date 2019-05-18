@@ -28,7 +28,7 @@ public class PlacesController {
     public ResponseEntity<Object> createPlace(@RequestBody Place place) {
         Place savedPlace = placeRepository.save(place);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+        URI location = ServletUriComponentsBuilder.fromCurrentServletMapping()
                 .path("/api/{id}")
                 .buildAndExpand(savedPlace.getId()).toUri();
 
@@ -39,7 +39,7 @@ public class PlacesController {
     public ResponseEntity<Object> createCategory(@RequestBody Category category) {
         Category savedCategory = categoryRepository.save(category);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+        URI location = ServletUriComponentsBuilder.fromCurrentServletMapping()
                 .path("/api/{id}")
                 .buildAndExpand(savedCategory.getId()).toUri();
 

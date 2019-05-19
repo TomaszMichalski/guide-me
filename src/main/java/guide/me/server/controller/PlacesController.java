@@ -33,7 +33,9 @@ public class PlacesController {
                 placeDto.getLatitude(), placeDto.getLongitude(), category);
         Place savedPlace = placeRepository.save(placeToSave);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
+        URI location = ServletUriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host("www.gdme.herokuapp.com")
                 .path("/api/places/{id}")
                 .buildAndExpand(savedPlace.getId()).toUri();
 
@@ -44,7 +46,9 @@ public class PlacesController {
     public ResponseEntity<Object> createCategory(@RequestBody Category category) {
         Category savedCategory = categoryRepository.save(category);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentServletMapping()
+        URI location = ServletUriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host("www.gdme.herokuapp.com")
                 .path("/api/categories/{id}")
                 .buildAndExpand(savedCategory.getId()).toUri();
 

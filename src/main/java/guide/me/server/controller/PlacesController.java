@@ -33,7 +33,7 @@ public class PlacesController {
                 placeDto.getLatitude(), placeDto.getLongitude(), category);
         Place savedPlace = placeRepository.save(placeToSave);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentServletMapping()
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/{id}")
                 .buildAndExpand(savedPlace.getId()).toUri();
 

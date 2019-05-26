@@ -1,1 +1,15 @@
 language: java
+sudo: true
+dist: trusty
+node_js:
+- "10.13.0"
+jdk:
+- oraclejdk8
+before_install:
+- jdk_switcher use oraclejdk8
+- chmod +x mvnw
+- npm install -g npm
+- node -v
+- npm -v
+install:
+- npm install

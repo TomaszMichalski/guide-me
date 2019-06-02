@@ -10,16 +10,15 @@ import org.springframework.context.annotation.Profile;
 import javax.sql.DataSource;
 
 @Configuration
-@Profile("heroku")
 public class DatabaseConfig {
 
-    @Value("${JDBC_DATABASE_URL}")
+    @Value("${spring.datasource.url}")
     private String dbUrl;
 
-    @Value("${JDBC_DATABASE_USERNAME}")
+    @Value("${spring.datasource.username}")
     private String dbUser;
 
-    @Value("${JDBC_DATABASE_PASSWORD}")
+    @Value("${spring.datasource.password}")
     private String dbPassword;
 
     @Bean

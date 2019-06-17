@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-
 import javax.sql.DataSource;
 
 @Configuration
@@ -29,7 +28,6 @@ public class DatabaseConfig {
         config.setUsername(dbUser);
         config.setPassword(dbPassword);
         config.setDriverClassName("org.postgresql.Driver");
-
         return new HikariDataSource(config);
     }
 }

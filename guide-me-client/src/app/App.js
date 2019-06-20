@@ -18,6 +18,9 @@ import Alert from 'react-s-alert';
 import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/slide.css';
 import './App.css';
+import CategoryList from "../categories/Categories";
+
+const client = require('./Client');
 
 class App extends Component {
     constructor(props) {
@@ -25,7 +28,8 @@ class App extends Component {
         this.state = {
             authenticated: false,
             currentUser: null,
-            loading: false
+            loading: false,
+            categories: []
         };
 
         this.loadCurrentlyLoggedInUser = this.loadCurrentlyLoggedInUser.bind(this);
@@ -62,6 +66,9 @@ class App extends Component {
 
     componentDidMount() {
         this.loadCurrentlyLoggedInUser();
+        client({method: 'GET', path: '/api/categories'}).done(response => {
+            this.setState({categories: response.entity._embedded.categories});
+        });
     }
 
     render() {
@@ -79,6 +86,8 @@ class App extends Component {
                         <Route exact path="/" component={Home}></Route>
                         <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
                                       component={Profile}></PrivateRoute>
+                        <PrivateRoute path="/categories" authenticated={this.state.authenticated} currentUser={this.state.currentUser} categories={this.state.categories}
+                                      component={CategoryList}></PrivateRoute>
                         <Route path="/login"
                                render={(props) => <Login authenticated={this.state.authenticated} {...props} />}></Route>
                         <Route path="/signup"

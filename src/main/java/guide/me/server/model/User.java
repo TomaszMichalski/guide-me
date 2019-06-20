@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
@@ -35,6 +37,22 @@ public class User {
     private AuthProvider provider;
 
     private String providerId;
+
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "user_category",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "category_id") }
+    )
+    private Set<Category> categories = new HashSet<>();
+
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "user_place",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "place_id") }
+    )
+    private Set<Place> places = new HashSet<>();
 
     public Long getId()
     {
@@ -114,5 +132,21 @@ public class User {
     public void setProviderId(String providerId)
     {
         this.providerId = providerId;
+    }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
+    }
+
+    public Set<Place> getPlaces() {
+        return places;
+    }
+
+    public void setPlaces(Set<Place> places) {
+        this.places = places;
     }
 }

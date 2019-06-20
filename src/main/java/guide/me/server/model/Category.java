@@ -21,7 +21,7 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     @JsonIgnoreProperties("category")
-    private Set<Place> places;
+    private Set<Place> places = new HashSet<>();
 
     public Category() {
         //
@@ -56,10 +56,6 @@ public class Category {
     }
 
     public void addPlace(Place place) {
-        if (places == null) {
-            places = new HashSet<>();
-        }
-
         places.add(place);
     }
 

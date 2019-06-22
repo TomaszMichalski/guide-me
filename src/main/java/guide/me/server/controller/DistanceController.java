@@ -1,6 +1,7 @@
 package guide.me.server.controller;
 
 import guide.me.server.distance.DistanceProvider;
+import guide.me.server.exception.ResourceNotFoundException;
 import guide.me.server.model.Distance;
 import guide.me.server.model.Place;
 import guide.me.server.repository.PlaceRepository;
@@ -27,7 +28,8 @@ public class DistanceController {
     @RequestMapping("/distance/{placeId}")
     public Distance distance(@PathVariable(name = "placeId") Long placeId,
                              @RequestParam(value = "addressFrom") String addressFrom) {
-        Place placeTo = placeRepository.findById(placeId).get();
+        Place placeTo = placeRepository.findById(placeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Place", "id", placeId));
 
         addressFrom = addressFixer.getFixedAddress(addressFrom);
 

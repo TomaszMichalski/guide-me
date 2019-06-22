@@ -4,16 +4,19 @@ import guide.me.server.exception.BadRequestException;
 import guide.me.server.exception.ResourceNotFoundException;
 import guide.me.server.model.Category;
 import guide.me.server.model.Place;
+import guide.me.server.model.PlaceDto;
 import guide.me.server.model.User;
 import guide.me.server.payload.ApiResponse;
 import guide.me.server.payload.SignUpRequest;
 import guide.me.server.payload.UserCategoryRequest;
+import guide.me.server.repository.PlaceRepository;
 import guide.me.server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,6 +26,19 @@ public class GuideController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PlaceRepository placeRepository;
+
+    @RequestMapping("/guide/places")
+    public Set<PlaceDto> getGuidePlaces() {
+        Set<PlaceDto> placeDtos = new HashSet<>();
+
+        placeRepository.findAll()
+                .forEach(place -> placeDtos.add(new PlaceDto(place, place.getCategory(), null)));
+
+        return placeDtos;
+    }
 
     @RequestMapping("users/{userId}/categories")
     public Set<Category> getUserCategories(@PathVariable(name = "userId") Long userId) {

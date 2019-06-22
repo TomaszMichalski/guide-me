@@ -8,7 +8,7 @@ import Home from '../home/Home';
 import Login from '../user/login/Login';
 import Signup from '../user/signup/Signup';
 import Profile from '../user/profile/Profile';
-import Places from '../places/Places';
+import PlacesList from '../places/Places';
 import OAuth2RedirectHandler from '../user/oauth2/OAuth2RedirectHandler';
 import NotFound from '../common/NotFound';
 import LoadingIndicator from '../common/LoadingIndicator';
@@ -29,7 +29,8 @@ class App extends Component {
             currentUser: null,
             loading: false,
             categories: [],
-            userCategories: []
+            userCategories: [],
+            places: []
         };
 
         this.loadCurrentlyLoggedInUser = this.loadCurrentlyLoggedInUser.bind(this);
@@ -74,6 +75,7 @@ class App extends Component {
             });
         });
     }
+
     loadUserCategories(userId){
         this.setState({
             loading:true
@@ -121,7 +123,9 @@ class App extends Component {
                     <Switch>
                         <Route exact path="/" component={Home}></Route>
                         <PrivateRoute path="/places" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
-                                      component={Places}></PrivateRoute>
+                                      categories={this.state.categories}
+                                      places={this.state.places}
+                                      component={PlacesList}></PrivateRoute>
                         <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
                                       component={Profile}></PrivateRoute>
                         <PrivateRoute path="/categories" authenticated={this.state.authenticated} categories={this.state.categories} currentUser={this.state.currentUser} userCategories={this.state.userCategories}

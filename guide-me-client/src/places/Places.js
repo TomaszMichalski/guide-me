@@ -22,20 +22,7 @@ class Place extends Component {
     }
 }
 
-class CategoryTabName extends Component {
-    constructor(props) {
-        super(props);
-        console.log(props);
-    }
-
-    render() {
-        return (
-            <Tab>{this.props.name}</Tab>
-        )
-    }
-}
-
-class CategoryTabPane extends Component {
+class CategoryTabPanel extends Component {
     constructor(props) {
         super(props);
         console.log(props);
@@ -46,19 +33,17 @@ class CategoryTabPane extends Component {
            <Place key={place.id} place={place}/>
         );
         return (
-            <TabPanel>
-                <table>
-                    <tbody>
-                    <tr>
-                        <th>Name</th>
-                        <th>Address</th>
-                        <th>Latitude</th>
-                        <th>Longitude</th>
-                    </tr>
-                    {places}
-                    </tbody>
-                </table>
-            </TabPanel>
+            <table>
+                <tbody>
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                </tr>
+                {places}
+                </tbody>
+            </table>
         )
     }
 }
@@ -70,18 +55,21 @@ class PlacesList extends Component {
     }
 
     render() {
-        const categoryNames = this.props.categories.map(category =>
-            <CategoryTabName key={category.id} name={category.name}/>
+        // remove slice(0, 3), it's only for development
+        const categoryNames = this.props.categories.slice(0, 3).map(category =>
+            <Tab>{category.name}</Tab>
         );
-        const categoryTabPanes = this.props.categories.map(category =>
-            <CategoryTabPane key={category.id} places={category.places}/>
+        const categoryTabPanels = this.props.categories.slice(0, 3).map(category =>
+            <TabPanel>
+                <CategoryTabPanel key={category.id} places={category.places}/>
+            </TabPanel>
         );
         return (
             <Tabs>
                 <TabList>
                     {categoryNames}
                 </TabList>
-                {categoryTabPanes}
+                {categoryTabPanels}
             </Tabs>
         )
     }

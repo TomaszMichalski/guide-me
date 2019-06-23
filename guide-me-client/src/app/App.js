@@ -124,7 +124,11 @@ class App extends Component {
                                       component={Places}></PrivateRoute>
                         <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
                                       component={Profile}></PrivateRoute>
-                        <PrivateRoute path="/categories" authenticated={this.state.authenticated} categories={this.state.categories} currentUser={this.state.currentUser} userCategories={this.state.userCategories}
+                        <PrivateRoute path="/categories" authenticated={this.state.authenticated}
+                                      categories={this.state.categories}
+                                      currentUser={this.state.currentUser}
+                                      userCategories={this.state.userCategories}
+                                      loadUserCategories={this.loadUserCategories}
                                       component={CategoryList}></PrivateRoute>
                         <Route path="/login"
                                render={(props) => <Login authenticated={this.state.authenticated} {...props} />}></Route>

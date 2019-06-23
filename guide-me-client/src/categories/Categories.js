@@ -6,7 +6,6 @@ import Dworce from '../img/Dworce.jpg';
 import Galerie from '../img/Galerie.jpg';
 import './Categories.css';
 import {postUserCategory} from "../util/APIUtils";
-import {ACCESS_TOKEN} from "../constants";
 import Alert from "react-s-alert";
 
 class Category extends Component {
@@ -60,10 +59,11 @@ class Category extends Component {
         postUserCategory(userCategoryRequest)
             .then(response => {
                 Alert.success("Category successfully added!");
+                this.props.loadUserCategories(this.props.currentUser.id);
             }).catch(error => {
             Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
         });
-    }
+    };
 
     static resolvePic(name) {
         switch (name) {
@@ -84,7 +84,10 @@ class CategoryList extends Component {
 
     render() {
         const categories = this.props.categories.map(category =>
-            <Category key={category.id} category={category} userCategories={this.props.userCategories} currentUser={this.props.currentUser}/>
+            <Category key={category.id} category={category}
+                      userCategories={this.props.userCategories}
+                      currentUser={this.props.currentUser}
+                      loadUserCategories={this.props.loadUserCategories}/>
         );
 
         return (

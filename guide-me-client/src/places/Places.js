@@ -30,7 +30,7 @@ class CategoryTabName extends Component {
 
     render() {
         return (
-            <Tab>this.props.name</Tab>
+            <Tab>{this.props.name}</Tab>
         )
     }
 }
@@ -42,6 +42,9 @@ class CategoryTabPane extends Component {
     }
 
     render() {
+        const places = this.props.places.map(place =>
+           <Place key={place.id} place={place}/>
+        );
         return (
             <TabPanel>
                 <table>
@@ -52,7 +55,7 @@ class CategoryTabPane extends Component {
                         <th>Latitude</th>
                         <th>Longitude</th>
                     </tr>
-                    {this.props.places}
+                    {places}
                     </tbody>
                 </table>
             </TabPanel>
@@ -64,24 +67,21 @@ class PlacesList extends Component {
     constructor(props) {
         super(props);
         console.log(props);
-        // sth about selected tab index
     }
 
     render() {
         const categoryNames = this.props.categories.map(category =>
-            <CategoryTabName name={category.name}/>
+            <CategoryTabName key={category.id} name={category.name}/>
         );
-        const categoryPlaces = _.groupBy(this.props.places, function(place) {
-            return place.category.id;
-        });
-        var categoryTabPanes = [];
-        for (var category in Object.keys(categoryPlaces)) {
-            categoryTabPanes.push(<CategoryTabPane places={categoryPlaces[category]}/>)
-        }
+        const categoryTabPanes = this.props.categories.map(category =>
+            <CategoryTabPane key={category.id} places={category.places}/>
+        );
         return (
             <Tabs>
-                {categoryNames}
-                {/*{categoryTabs}*/}
+                <TabList>
+                    {categoryNames}
+                </TabList>
+                {categoryTabPanes}
             </Tabs>
         )
     }

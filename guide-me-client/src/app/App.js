@@ -60,7 +60,7 @@ class App extends Component {
 
     loadCategories(){
         this.setState({
-            loading:true
+            loading: true
         });
 
         getAllCategories()
@@ -78,7 +78,7 @@ class App extends Component {
 
     loadUserCategories(userId){
         this.setState({
-            loading:true
+            loading: true
         });
 
         getUserCategories(userId)
@@ -124,7 +124,6 @@ class App extends Component {
                         <Route exact path="/" component={Home}></Route>
                         <PrivateRoute path="/places" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
                                       categories={this.state.categories}
-                                      places={this.state.places}
                                       component={PlacesList}></PrivateRoute>
                         <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
                                       component={Profile}></PrivateRoute>

@@ -19,6 +19,7 @@ class Category extends Component {
 
         this.isInUserCategories = this.isInUserCategories.bind(this);
         this.addUserCategory = this.addUserCategory.bind(this);
+        this.deleteUserCategory = this.deleteUserCategory.bind(this);
     }
 
     render() {

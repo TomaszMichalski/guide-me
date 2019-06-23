@@ -12,7 +12,7 @@ import Places from '../places/Places';
 import OAuth2RedirectHandler from '../user/oauth2/OAuth2RedirectHandler';
 import NotFound from '../common/NotFound';
 import LoadingIndicator from '../common/LoadingIndicator';
-import {getAllCategories, getCurrentUser} from '../util/APIUtils';
+import {getAllCategories, getCurrentUser, getUserCategories} from '../util/APIUtils';
 import { ACCESS_TOKEN } from '../constants/index';
 import PrivateRoute from '../common/PrivateRoute';
 import Alert from 'react-s-alert';
@@ -29,11 +29,13 @@ class App extends Component {
             currentUser: null,
             loading: false,
             categories: [],
+            userCategories: []
         };
 
         this.loadCurrentlyLoggedInUser = this.loadCurrentlyLoggedInUser.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
         this.loadCategories = this.loadCategories.bind(this);
+        this.loadUserCategories = this.loadUserCategories.bind(this);
     }
 
     loadCurrentlyLoggedInUser() {
@@ -47,7 +49,7 @@ class App extends Component {
                 currentUser: response,
                 authenticated: true,
                 loading: false,
-            });
+            }, () => this.loadUserCategories(this.state.currentUser.id));
         }).catch(error => {
             this.setState({
                 loading: false
@@ -72,12 +74,30 @@ class App extends Component {
             });
         });
     }
+    loadUserCategories(userId){
+        this.setState({
+            loading:true
+        });
+
+        getUserCategories(userId)
+            .then(response => {
+                this.setState({
+                    userCategories: response,
+                    loading: false
+                });
+            }).catch(error => {
+            this.setState({
+                loading: false
+            });
+        });
+    }
 
     handleLogout() {
         localStorage.removeItem(ACCESS_TOKEN);
         this.setState({
             authenticated: false,
-            currentUser: null
+            currentUser: null,
+            userCategories: []
         });
         Alert.success("You're safely logged out!");
     }
@@ -104,7 +124,7 @@ class App extends Component {
                                       component={Places}></PrivateRoute>
                         <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
                                       component={Profile}></PrivateRoute>
-                        <PrivateRoute path="/categories" authenticated={this.state.authenticated} categories={this.state.categories} currentUser={this.state.currentUser}
+                        <PrivateRoute path="/categories" authenticated={this.state.authenticated} categories={this.state.categories} currentUser={this.state.currentUser} userCategories={this.state.userCategories}
                                       component={CategoryList}></PrivateRoute>
                         <Route path="/login"
                                render={(props) => <Login authenticated={this.state.authenticated} {...props} />}></Route>

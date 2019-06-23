@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import Muzea from '../img/Muzea.jpg';
 import Uczelnie from '../img/Uczelnie.jpg';
 import Dworce from '../img/Dworce.jpg';
@@ -10,6 +10,12 @@ class Category extends Component {
     constructor(props) {
         super(props);
         console.log(props);
+
+        this.state = {
+            canAdd: false
+        };
+
+        this.isInUserCategories = this.isInUserCategories.bind(this);
     }
 
     render() {
@@ -19,12 +25,23 @@ class Category extends Component {
                     <img className="card-img-top" src={picUrl} alt="Card image cap"/>
                         <div className="card-body">
                             <h5 className="card-title">{this.props.category.name}</h5>
-                            <a href="#" className="btn btn-primary btn-block">Dodaj</a>
-                            <a href="#" className="btn btn-block" style={{background: "red", color: "white"}}>Usuń</a>
+                            <a href="#" className="btn btn-primary btn-block" hidden={this.isInUserCategories(this.props.category)}>Dodaj</a>
+                            <a href="#" className="btn btn-block" style={{background: "red", color: "white"}} hidden={!this.isInUserCategories(this.props.category)}>Usuń</a>
 
                         </div>
                 </div>
         )
+    }
+
+    componentDidMount() {
+        this.state = {
+            canAdd: this.isInUserCategories(this.props.category)
+        }
+    }
+
+    isInUserCategories(category) {
+        let categoriesIds = this.props.userCategories.map(cat => cat.id);
+        return categoriesIds.includes(category.id);
     }
 
     static resolvePic(name) {
@@ -46,7 +63,7 @@ class CategoryList extends Component {
 
     render() {
         const categories = this.props.categories.map(category =>
-            <Category key={category.id} category={category}/>
+            <Category key={category.id} category={category} userCategories={this.props.userCategories}/>
         );
 
         return (

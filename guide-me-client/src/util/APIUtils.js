@@ -41,6 +41,13 @@ export function getAllCategories() {
     });
 }
 
+export function getUserCategories(userId) {
+    return request({
+        url: API_BASE_URL + "/api/" + userId + "/categories",
+        method: 'GET',
+    });
+}
+
 export function login(loginRequest) {
     return request({
         url: API_BASE_URL + "/auth/login",

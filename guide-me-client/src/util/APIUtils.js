@@ -43,8 +43,17 @@ export function getAllCategories() {
 
 export function getUserCategories(userId) {
     return request({
-        url: API_BASE_URL + "/api/" + userId + "/categories",
+        url: API_BASE_URL + "/api/users/" + userId + "/categories",
         method: 'GET',
+    });
+}
+
+export function postUserCategory(userCategoryRequest) {
+    console.log(userCategoryRequest);
+    return request({
+        url: API_BASE_URL + "/api/users/" + userCategoryRequest.userId + "/categories",
+        method: 'POST',
+        body: JSON.stringify(userCategoryRequest)
     });
 }
 

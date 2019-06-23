@@ -1,15 +1,19 @@
 package guide.me.server.controller;
 
+import guide.me.server.exception.BadRequestException;
 import guide.me.server.exception.ResourceNotFoundException;
 import guide.me.server.model.Category;
 import guide.me.server.model.Place;
 import guide.me.server.model.User;
+import guide.me.server.payload.ApiResponse;
+import guide.me.server.payload.SignUpRequest;
+import guide.me.server.payload.UserCategoryRequest;
 import guide.me.server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Set;
 
 @RestController
@@ -19,14 +23,14 @@ public class GuideController {
     @Autowired
     private UserRepository userRepository;
 
-    @RequestMapping("/{userId}/categories")
+    @RequestMapping("users/{userId}/categories")
     public Set<Category> getUserCategories(@PathVariable(name = "userId") Long userId) {
         return userRepository.findById(userId)
                 .map(User::getCategories)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
     }
 
-    @RequestMapping("/{userId}/categories/{categoryId}/places")
+    @RequestMapping("users/{userId}/categories/{categoryId}/places")
     public Set<Place> getUserPlaces(@PathVariable(name = "userId") Long userId,
                                     @PathVariable(name = "categoryId") Long categoryId) {
         return userRepository.findById(userId)
@@ -37,5 +41,26 @@ public class GuideController {
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId))
                 .getPlaces();
+    }
+
+    @PostMapping("users/{userId}/categories")
+        public ResponseEntity<?> addUserCategory(@Valid @RequestBody UserCategoryRequest userCategoryRequest) {
+
+        Long rqUserId = userCategoryRequest.getUserId();
+        Category rqUserCategory = userCategoryRequest.getCategory();
+
+        User user = userRepository.findById(rqUserId).orElseThrow(() -> new BadRequestException("No user with that id"));
+        Set<Category> userCategories = user.getCategories();
+
+        if(userCategories.contains(userCategoryRequest.getCategory())){
+            throw new BadRequestException("User already has that category!");
+        }
+
+        userCategories.add(userCategoryRequest.getCategory());
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok()
+                .body(new ApiResponse(true, "Category added successfully!"));
     }
 }

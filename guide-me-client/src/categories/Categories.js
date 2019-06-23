@@ -5,6 +5,9 @@ import Uczelnie from '../img/Uczelnie.jpg';
 import Dworce from '../img/Dworce.jpg';
 import Galerie from '../img/Galerie.jpg';
 import './Categories.css';
+import {postUserCategory} from "../util/APIUtils";
+import {ACCESS_TOKEN} from "../constants";
+import Alert from "react-s-alert";
 
 class Category extends Component {
     constructor(props) {
@@ -16,6 +19,7 @@ class Category extends Component {
         };
 
         this.isInUserCategories = this.isInUserCategories.bind(this);
+        this.addUserCategory = this.addUserCategory.bind(this);
     }
 
     render() {
@@ -25,7 +29,10 @@ class Category extends Component {
                     <img className="card-img-top" src={picUrl} alt="Card image cap"/>
                         <div className="card-body">
                             <h5 className="card-title">{this.props.category.name}</h5>
-                            <a href="#" className="btn btn-primary btn-block" hidden={this.isInUserCategories(this.props.category)}>Dodaj</a>
+                            <a href="#"
+                               className="btn btn-primary btn-block"
+                               hidden={this.isInUserCategories(this.props.category)}
+                               onClick={() => this.addUserCategory(this.props.category)}>Dodaj</a>
                             <a href="#" className="btn btn-block" style={{background: "red", color: "white"}} hidden={!this.isInUserCategories(this.props.category)}>Usuń</a>
 
                         </div>
@@ -42,6 +49,20 @@ class Category extends Component {
     isInUserCategories(category) {
         let categoriesIds = this.props.userCategories.map(cat => cat.id);
         return categoriesIds.includes(category.id);
+    }
+
+    addUserCategory(category) {
+        let userCategoryRequest = {
+            category: category,
+            userId: this.props.currentUser.id
+        };
+
+        postUserCategory(userCategoryRequest)
+            .then(response => {
+                Alert.success("Category successfully added!");
+            }).catch(error => {
+            Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+        });
     }
 
     static resolvePic(name) {
@@ -63,7 +84,7 @@ class CategoryList extends Component {
 
     render() {
         const categories = this.props.categories.map(category =>
-            <Category key={category.id} category={category} userCategories={this.props.userCategories}/>
+            <Category key={category.id} category={category} userCategories={this.props.userCategories} currentUser={this.props.currentUser}/>
         );
 
         return (

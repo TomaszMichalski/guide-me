@@ -56,6 +56,14 @@ export function postUserCategory(userCategoryRequest) {
         body: JSON.stringify(userCategoryRequest)
     });
 }
+export function deleteUserCategory(userCategoryRequest) {
+    console.log(userCategoryRequest);
+    return request({
+        url: API_BASE_URL + "/api/users/" + userCategoryRequest.userId + "/categories",
+        method: 'DELETE',
+        body: JSON.stringify(userCategoryRequest)
+    });
+}
 
 export function login(loginRequest) {
     return request({

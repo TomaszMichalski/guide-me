@@ -5,7 +5,7 @@ import Uczelnie from '../img/Uczelnie.jpg';
 import Dworce from '../img/Dworce.jpg';
 import Galerie from '../img/Galerie.jpg';
 import './Categories.css';
-import {postUserCategory} from "../util/APIUtils";
+import {deleteUserCategory, postUserCategory} from "../util/APIUtils";
 import Alert from "react-s-alert";
 
 class Category extends Component {
@@ -32,7 +32,9 @@ class Category extends Component {
                                className="btn btn-primary btn-block"
                                hidden={this.isInUserCategories(this.props.category)}
                                onClick={() => this.addUserCategory(this.props.category)}>Dodaj</a>
-                            <a href="#" className="btn btn-block" style={{background: "red", color: "white"}} hidden={!this.isInUserCategories(this.props.category)}>Usuń</a>
+                            <a href="#" className="btn btn-block" style={{background: "red", color: "white"}}
+                               hidden={!this.isInUserCategories(this.props.category)}
+                               onClick={() => this.removeUserCategory(this.props.category)}>Usuń</a>
 
                         </div>
                 </div>
@@ -59,6 +61,21 @@ class Category extends Component {
         postUserCategory(userCategoryRequest)
             .then(response => {
                 Alert.success("Category successfully added!");
+                this.props.loadUserCategories(this.props.currentUser.id);
+            }).catch(error => {
+            Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+        });
+    };
+
+    removeUserCategory(category) {
+        let userCategoryRequest = {
+            category: category,
+            userId: this.props.currentUser.id
+        };
+
+        deleteUserCategory(userCategoryRequest)
+            .then(response => {
+                Alert.success("Category successfully deleted!");
                 this.props.loadUserCategories(this.props.currentUser.id);
             }).catch(error => {
             Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');

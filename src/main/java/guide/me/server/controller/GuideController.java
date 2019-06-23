@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -52,15 +53,39 @@ public class GuideController {
         User user = userRepository.findById(rqUserId).orElseThrow(() -> new BadRequestException("No user with that id"));
         Set<Category> userCategories = user.getCategories();
 
+        System.out.println(rqUserCategory);
         if(userCategories.contains(userCategoryRequest.getCategory())){
             throw new BadRequestException("User already has that category!");
         }
 
-        userCategories.add(userCategoryRequest.getCategory());
+        userCategories.add(rqUserCategory);
 
         userRepository.save(user);
 
         return ResponseEntity.ok()
                 .body(new ApiResponse(true, "Category added successfully!"));
     }
+
+    @DeleteMapping("users/{userId}/categories")
+    public ResponseEntity<?> removeUserCategory(@Valid @RequestBody UserCategoryRequest userCategoryRequest) {
+
+        Long rqUserId = userCategoryRequest.getUserId();
+        Category rqUserCategory = userCategoryRequest.getCategory();
+
+        User user = userRepository.findById(rqUserId).orElseThrow(() -> new BadRequestException("No user with that id"));
+        Set<Category> userCategories = user.getCategories();
+
+        Set<Category> newCategories = userCategories.stream()
+                .filter(category -> !category.getId()
+                        .equals(rqUserCategory.getId()))
+                .collect(Collectors.toSet());
+
+        user.setCategories(newCategories);
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok()
+                .body(new ApiResponse(true, "Category added successfully!"));
+    }
+
 }

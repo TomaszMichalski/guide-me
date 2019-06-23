@@ -6,13 +6,12 @@ import Dworce from '../img/Dworce.jpg';
 import Galerie from '../img/Galerie.jpg';
 import './Categories.css';
 
-
-
 class Category extends Component {
     constructor(props) {
         super(props);
         console.log(props);
     }
+
     render() {
         const picUrl = Category.resolvePic(this.props.category.name);
         return (
@@ -21,7 +20,7 @@ class Category extends Component {
                         <div className="card-body">
                             <h5 className="card-title">{this.props.category.name}</h5>
                             <a href="#" className="btn btn-primary btn-block">Dodaj</a>
-                            <a href="#" className="btn btn-block" style={{background: "red", color: "white"}}>Usun</a>
+                            <a href="#" className="btn btn-block" style={{background: "red", color: "white"}}>Usuń</a>
 
                         </div>
                 </div>
@@ -47,8 +46,9 @@ class CategoryList extends Component {
 
     render() {
         const categories = this.props.categories.map(category =>
-            <Category key={category._links.self.href} category={category}/>
+            <Category key={category.id} category={category}/>
         );
+
         return (
                 <div className="flex-container">
                 {categories}

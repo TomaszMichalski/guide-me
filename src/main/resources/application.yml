@@ -1,7 +1,4 @@
 spring:
-  data:
-    rest:
-      base-path: "/api"
   jpa:
     show-sql: true
     generate-ddl: true

@@ -3,7 +3,7 @@ import { API_BASE_URL, ACCESS_TOKEN } from '../constants/index';
 const request = (options) => {
     const headers = new Headers({
         'Content-Type': 'application/json',
-    })
+    });
 
     if(localStorage.getItem(ACCESS_TOKEN)) {
         headers.append('Authorization', 'Bearer ' + localStorage.getItem(ACCESS_TOKEN))
@@ -31,6 +31,20 @@ export function getCurrentUser() {
     return request({
         url: API_BASE_URL + "/user/me",
         method: 'GET'
+    });
+}
+
+export function getAllCategories() {
+    return request({
+        url: API_BASE_URL + "/api/categories",
+        method: 'GET',
+    });
+}
+
+export function getUserCategories(userId) {
+    return request({
+        url: API_BASE_URL + "/api/" + userId + "/categories",
+        method: 'GET',
     });
 }
 

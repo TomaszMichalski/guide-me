@@ -5,14 +5,17 @@ import guide.me.server.exception.ResourceNotFoundException;
 import guide.me.server.model.*;
 import guide.me.server.payload.ApiResponse;
 import guide.me.server.payload.UserCategoryRequest;
+import guide.me.server.payload.UserSetStartingPointRequest;
 import guide.me.server.repository.PlaceRepository;
 import guide.me.server.repository.UserRepository;
+import guide.me.server.util.UserProvidedAddressFixer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,6 +28,9 @@ public class GuideController {
 
     @Autowired
     private PlaceRepository placeRepository;
+
+    @Autowired
+    private UserProvidedAddressFixer addressFixer;
 
     @RequestMapping("/guide/places")
     public Set<PlaceDto> getGuidePlaces() {
@@ -48,6 +54,45 @@ public class GuideController {
         return userRepository.findById(userId)
                 .map(User::getStartingPoints)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+    }
+
+    @PostMapping("users/{userId}/starting-points")
+    public ResponseEntity<?> setUserStartingPoint(@Valid @RequestBody UserSetStartingPointRequest userSetStartingPointRequest) {
+        Long rqUserId = userSetStartingPointRequest.getUserId();
+        String rqStartingPointAddress = userSetStartingPointRequest.getAddress();
+
+        User user = userRepository.findById(rqUserId).orElseThrow(() -> new BadRequestException("No user with that id"));
+        Set<StartingPoint> startingPoints = user.getStartingPoints();
+
+        rqStartingPointAddress = addressFixer.getFixedAddress(rqStartingPointAddress);
+
+        if(rqStartingPointAddress == null){
+            throw new BadRequestException("Wrong address!");
+        }
+
+        StartingPoint startingPoint = new StartingPoint();
+        startingPoint.setAddress(rqStartingPointAddress);
+        startingPoint.setUser(user);
+        startingPoint.setActive(true);
+
+        if(startingPoints.isEmpty()){
+            startingPoints.add(startingPoint);
+        } else {
+            Optional<StartingPoint> currentStartingPoint = startingPoints
+                    .stream()
+                    .filter(StartingPoint::isActive)
+                    .findFirst();
+            if(currentStartingPoint.isPresent()) {
+                currentStartingPoint.get().setAddress(rqStartingPointAddress);
+            } else {
+                startingPoints.add(startingPoint);
+            }
+        }
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok()
+                .body(new ApiResponse(true, "Starting point set successfully!"));
     }
 
     @RequestMapping("users/{userId}/categories/{categoryId}/places")

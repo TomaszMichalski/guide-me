@@ -2,10 +2,7 @@ package guide.me.server.controller;
 
 import guide.me.server.exception.BadRequestException;
 import guide.me.server.exception.ResourceNotFoundException;
-import guide.me.server.model.Category;
-import guide.me.server.model.Place;
-import guide.me.server.model.PlaceDto;
-import guide.me.server.model.User;
+import guide.me.server.model.*;
 import guide.me.server.payload.ApiResponse;
 import guide.me.server.payload.UserCategoryRequest;
 import guide.me.server.repository.PlaceRepository;
@@ -43,6 +40,13 @@ public class GuideController {
     public Set<Category> getUserCategories(@PathVariable(name = "userId") Long userId) {
         return userRepository.findById(userId)
                 .map(User::getCategories)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+    }
+
+    @RequestMapping("users/{userId}/starting-points")
+    public Set<StartingPoint> getUserStartingPoints(@PathVariable(name = "userId") Long userId) {
+        return userRepository.findById(userId)
+                .map(User::getStartingPoints)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
     }
 

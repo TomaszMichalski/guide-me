@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './Profile.css';
 import StartingPoint from './../../startingPoint/StartingPoint.js';
+import PrivateRoute from "../../common/PrivateRoute";
 
 class Profile extends Component {
     constructor(props) {
@@ -9,7 +10,9 @@ class Profile extends Component {
     }
     render() {
 
-        const startingPoint = <StartingPoint />;
+        const startingPoint = <StartingPoint currentUser={this.props.currentUser}
+                                             startingPoints={this.props.startingPoints}
+                                             loadUserStartingPoints={this.props.loadUserStartingPoints}/>;
 
         return (
             <div className="profile-container">

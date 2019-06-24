@@ -12,8 +12,10 @@ import guide.me.server.util.UserProvidedAddressFixer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -58,6 +60,7 @@ public class GuideController {
 
     @PostMapping("users/{userId}/starting-points")
     public ResponseEntity<?> setUserStartingPoint(@Valid @RequestBody UserSetStartingPointRequest userSetStartingPointRequest) {
+
         Long rqUserId = userSetStartingPointRequest.getUserId();
         String rqStartingPointAddress = userSetStartingPointRequest.getAddress();
 
@@ -70,10 +73,7 @@ public class GuideController {
             throw new BadRequestException("Wrong address!");
         }
 
-        StartingPoint startingPoint = new StartingPoint();
-        startingPoint.setAddress(rqStartingPointAddress);
-        startingPoint.setUser(user);
-        startingPoint.setActive(true);
+        StartingPoint startingPoint = new StartingPoint(rqStartingPointAddress, true, user);
 
         if(startingPoints.isEmpty()){
             startingPoints.add(startingPoint);
@@ -89,9 +89,14 @@ public class GuideController {
             }
         }
 
-        userRepository.save(user);
+        user.setStartingPoints(startingPoints);
+        User result = userRepository.save(user);
 
-        return ResponseEntity.ok()
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentContextPath().path("api/users/" + rqUserId + "/starting-points")
+                .buildAndExpand(result.getId()).toUri();
+
+        return ResponseEntity.created(location)
                 .body(new ApiResponse(true, "Starting point set successfully!"));
     }
 

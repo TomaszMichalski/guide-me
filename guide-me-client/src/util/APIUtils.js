@@ -47,6 +47,12 @@ export function getUserCategories(userId) {
         method: 'GET',
     });
 }
+export function getUserStartingPoints(userId) {
+    return request({
+        url: API_BASE_URL + "/api/users/" + userId + "/starting-points",
+        method: 'GET',
+    });
+}
 
 export function postUserCategory(userCategoryRequest) {
     console.log(userCategoryRequest);
@@ -54,6 +60,14 @@ export function postUserCategory(userCategoryRequest) {
         url: API_BASE_URL + "/api/users/" + userCategoryRequest.userId + "/categories",
         method: 'POST',
         body: JSON.stringify(userCategoryRequest)
+    });
+}
+export function postUserStartingPoint(userStartingPointRequest) {
+    console.log(userStartingPointRequest);
+    return request({
+        url: API_BASE_URL + "/api/users/" + userStartingPointRequest.userId + "/starting-points",
+        method: 'POST',
+        body: JSON.stringify(userStartingPointRequest)
     });
 }
 export function deleteUserCategory(userCategoryRequest) {

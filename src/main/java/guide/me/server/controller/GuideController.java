@@ -7,7 +7,6 @@ import guide.me.server.model.Place;
 import guide.me.server.model.PlaceDto;
 import guide.me.server.model.User;
 import guide.me.server.payload.ApiResponse;
-import guide.me.server.payload.SignUpRequest;
 import guide.me.server.payload.UserCategoryRequest;
 import guide.me.server.repository.PlaceRepository;
 import guide.me.server.repository.UserRepository;

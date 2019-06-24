@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './Profile.css';
+import StartingPoint from './../../startingPoint/StartingPoint.js';
 
 class Profile extends Component {
     constructor(props) {
@@ -7,6 +8,9 @@ class Profile extends Component {
         console.log(props);
     }
     render() {
+
+        const startingPoint = <StartingPoint />;
+
         return (
             <div className="profile-container">
                 <div className="container">
@@ -28,7 +32,12 @@ class Profile extends Component {
                         </div>
                     </div>
                 </div>
+                <div>
+                    {startingPoint}
+                </div>
+
             </div>
+
         );
     }
 }

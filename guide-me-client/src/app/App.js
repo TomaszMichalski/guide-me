@@ -8,7 +8,7 @@ import Home from '../home/Home';
 import Login from '../user/login/Login';
 import Signup from '../user/signup/Signup';
 import Profile from '../user/profile/Profile';
-import Places from '../places/Places';
+import PlacesList from '../places/Places';
 import OAuth2RedirectHandler from '../user/oauth2/OAuth2RedirectHandler';
 import NotFound from '../common/NotFound';
 import LoadingIndicator from '../common/LoadingIndicator';
@@ -29,7 +29,8 @@ class App extends Component {
             currentUser: null,
             loading: false,
             categories: [],
-            userCategories: []
+            userCategories: [],
+            places: []
         };
 
         this.loadCurrentlyLoggedInUser = this.loadCurrentlyLoggedInUser.bind(this);
@@ -59,7 +60,7 @@ class App extends Component {
 
     loadCategories(){
         this.setState({
-            loading:true
+            loading: true
         });
 
         getAllCategories()
@@ -74,9 +75,10 @@ class App extends Component {
             });
         });
     }
+
     loadUserCategories(userId){
         this.setState({
-            loading:true
+            loading: true
         });
 
         getUserCategories(userId)

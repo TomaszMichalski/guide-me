@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import {getDistance} from '../util/APIUtils';
 import ReactTable from 'react-table';
 import "react-tabs/style/react-tabs.css";
 import 'react-table/react-table.css';
 import './Places.css';
+import Alert from "react-s-alert";
 
 class CategoryTabPanel extends Component {
     constructor(props) {
@@ -24,7 +26,17 @@ class CategoryTabPanel extends Component {
         }, {
             Header: 'Longitude',
             accessor: 'latitude'
+        }, {
+            Header: 'Distance',
+            accessor: 'distance'
         }];
+        this.props.places.map(place =>
+            getDistance(place.id, this.props.userId)
+                .then(response => place.distance = response.distance
+                ).catch(error => {
+                    Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+                })
+        );
         return (
             <ReactTable
                 data={this.props.places}
@@ -46,7 +58,7 @@ class PlacesList extends Component {
         );
         const categoryTabPanels = this.props.categories.map(category =>
             <TabPanel>
-                <CategoryTabPanel key={category.id} places={category.places}/>
+                <CategoryTabPanel key={category.id} places={category.places} userId={this.props.currentUser.id}/>
             </TabPanel>
         );
         return (

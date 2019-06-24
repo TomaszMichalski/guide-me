@@ -7,10 +7,12 @@ import guide.me.server.payload.ApiResponse;
 import guide.me.server.payload.UserCategoryRequest;
 import guide.me.server.payload.UserSetStartingPointRequest;
 import guide.me.server.repository.PlaceRepository;
+import guide.me.server.repository.StartingPointRepository;
 import guide.me.server.repository.UserRepository;
 import guide.me.server.util.UserProvidedAddressFixer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -30,6 +32,9 @@ public class GuideController {
 
     @Autowired
     private PlaceRepository placeRepository;
+
+    @Autowired
+    private StartingPointRepository startingPointRepository;
 
     @Autowired
     private UserProvidedAddressFixer addressFixer;
@@ -58,6 +63,7 @@ public class GuideController {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
     }
 
+    @Transactional
     @PostMapping("users/{userId}/starting-points")
     public ResponseEntity<?> setUserStartingPoint(@Valid @RequestBody UserSetStartingPointRequest userSetStartingPointRequest) {
 
@@ -65,7 +71,6 @@ public class GuideController {
         String rqStartingPointAddress = userSetStartingPointRequest.getAddress();
 
         User user = userRepository.findById(rqUserId).orElseThrow(() -> new BadRequestException("No user with that id"));
-        Set<StartingPoint> startingPoints = user.getStartingPoints();
 
         rqStartingPointAddress = addressFixer.getFixedAddress(rqStartingPointAddress);
 
@@ -73,24 +78,18 @@ public class GuideController {
             throw new BadRequestException("Wrong address!");
         }
 
-        StartingPoint startingPoint = new StartingPoint(rqStartingPointAddress, true, user);
+        StartingPoint startingPoint = new StartingPoint();
+        startingPoint.setAddress(rqStartingPointAddress);
+        startingPoint.setActive(true);
+        startingPoint.setUser(user);
 
-        if(startingPoints.isEmpty()){
-            startingPoints.add(startingPoint);
-        } else {
-            Optional<StartingPoint> currentStartingPoint = startingPoints
-                    .stream()
-                    .filter(StartingPoint::isActive)
-                    .findFirst();
-            if(currentStartingPoint.isPresent()) {
-                currentStartingPoint.get().setAddress(rqStartingPointAddress);
-            } else {
-                startingPoints.add(startingPoint);
-            }
+        Optional<StartingPoint> optionalStartingPoint = startingPointRepository.findByUser(user);
+
+        if(optionalStartingPoint.isPresent()) {
+            startingPointRepository.deleteByUser(user);
         }
 
-        user.setStartingPoints(startingPoints);
-        User result = userRepository.save(user);
+        StartingPoint result = startingPointRepository.save(startingPoint);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("api/users/" + rqUserId + "/starting-points")

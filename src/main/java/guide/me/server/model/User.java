@@ -1,6 +1,7 @@
 package guide.me.server.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -53,6 +54,10 @@ public class User {
             inverseJoinColumns = { @JoinColumn(name = "place_id") }
     )
     private Set<Place> places = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnoreProperties("user")
+    private Set<StartingPoint> startingPoints = new HashSet<>();
 
     public Long getId()
     {
@@ -148,5 +153,13 @@ public class User {
 
     public void setPlaces(Set<Place> places) {
         this.places = places;
+    }
+
+    public Set<StartingPoint> getStartingPoints() {
+        return startingPoints;
+    }
+
+    public void setStartingPoints(Set<StartingPoint> startingPoints) {
+        this.startingPoints = startingPoints;
     }
 }

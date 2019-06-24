@@ -120,9 +120,12 @@ class App extends Component {
                 <div className="app-body">
                     <Switch>
                         <Route exact path="/" component={Home}></Route>
-                        <PrivateRoute path="/places" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
-                                      component={Places}></PrivateRoute>
-                        <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
+                        <PrivateRoute path="/places" authenticated={this.state.authenticated}
+                                      currentUser={this.state.currentUser}
+                                      categories={this.state.userCategories}
+                                      component={PlacesList}></PrivateRoute>
+                        <PrivateRoute path="/profile" authenticated={this.state.authenticated}
+                                      currentUser={this.state.currentUser}
                                       component={Profile}></PrivateRoute>
                         <PrivateRoute path="/categories" authenticated={this.state.authenticated}
                                       categories={this.state.categories}

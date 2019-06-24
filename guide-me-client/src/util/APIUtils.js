@@ -65,6 +65,14 @@ export function deleteUserCategory(userCategoryRequest) {
     });
 }
 
+export function getDistance(placeId, userId) {
+    return request({
+        url: API_BASE_URL + "/api/distance/" + placeId + "/" + userId,
+        method: 'GET',
+    });
+}
+
+
 export function login(loginRequest) {
     return request({
         url: API_BASE_URL + "/auth/login",

@@ -123,7 +123,7 @@ class App extends Component {
                     <Switch>
                         <Route exact path="/" component={Home}></Route>
                         <PrivateRoute path="/places" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
-                                      categories={this.state.categories}
+                                      categories={this.state.userCategories}
                                       component={PlacesList}></PrivateRoute>
                         <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
                                       component={Profile}></PrivateRoute>

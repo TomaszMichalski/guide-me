@@ -12,7 +12,7 @@ import PlacesList from '../places/Places';
 import OAuth2RedirectHandler from '../user/oauth2/OAuth2RedirectHandler';
 import NotFound from '../common/NotFound';
 import LoadingIndicator from '../common/LoadingIndicator';
-import {getAllCategories, getCurrentUser, getUserCategories} from '../util/APIUtils';
+import {getAllCategories, getCurrentUser, getUserCategories, getUserStartingPoints} from '../util/APIUtils';
 import { ACCESS_TOKEN } from '../constants/index';
 import PrivateRoute from '../common/PrivateRoute';
 import Alert from 'react-s-alert';
@@ -30,6 +30,7 @@ class App extends Component {
             loading: false,
             categories: [],
             userCategories: [],
+            userStartingPoints: [],
             places: []
         };
 
@@ -37,6 +38,7 @@ class App extends Component {
         this.handleLogout = this.handleLogout.bind(this);
         this.loadCategories = this.loadCategories.bind(this);
         this.loadUserCategories = this.loadUserCategories.bind(this);
+        this.loadUserStartingPoints = this.loadUserStartingPoints.bind(this);
     }
 
     loadCurrentlyLoggedInUser() {
@@ -50,12 +52,17 @@ class App extends Component {
                 currentUser: response,
                 authenticated: true,
                 loading: false,
-            }, () => this.loadUserCategories(this.state.currentUser.id));
+            }, () => this.loadUserProperties(this.state.currentUser.id));
         }).catch(error => {
             this.setState({
                 loading: false
             });
         });
+    }
+
+    loadUserProperties(userId) {
+        this.loadUserCategories(userId);
+        this.loadUserStartingPoints(userId);
     }
 
     loadCategories(){
@@ -94,6 +101,24 @@ class App extends Component {
         });
     }
 
+    loadUserStartingPoints(userId){
+        this.setState({
+            loading: true
+        });
+
+        getUserStartingPoints(userId)
+            .then(response => {
+                this.setState({
+                    userStartingPoints: response,
+                    loading: false
+                });
+            }).catch(error => {
+            this.setState({
+                loading: false
+            });
+        });
+    }
+
     handleLogout() {
         localStorage.removeItem(ACCESS_TOKEN);
         this.setState({
@@ -122,10 +147,14 @@ class App extends Component {
                 <div className="app-body">
                     <Switch>
                         <Route exact path="/" component={Home}></Route>
-                        <PrivateRoute path="/places" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
+                        <PrivateRoute path="/places" authenticated={this.state.authenticated}
+                                      currentUser={this.state.currentUser}
                                       categories={this.state.userCategories}
                                       component={PlacesList}></PrivateRoute>
-                        <PrivateRoute path="/profile" authenticated={this.state.authenticated} currentUser={this.state.currentUser}
+                        <PrivateRoute path="/profile" authenticated={this.state.authenticated}
+                                      currentUser={this.state.currentUser}
+                                      startingPoints={this.state.userStartingPoints}
+                                      loadUserStartingPoints={this.loadUserStartingPoints}
                                       component={Profile}></PrivateRoute>
                         <PrivateRoute path="/categories" authenticated={this.state.authenticated}
                                       categories={this.state.categories}

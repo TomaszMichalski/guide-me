@@ -2,20 +2,24 @@ package guide.me.server.controller;
 
 import guide.me.server.exception.BadRequestException;
 import guide.me.server.exception.ResourceNotFoundException;
-import guide.me.server.model.Category;
-import guide.me.server.model.Place;
-import guide.me.server.model.PlaceDto;
-import guide.me.server.model.User;
+import guide.me.server.model.*;
 import guide.me.server.payload.ApiResponse;
 import guide.me.server.payload.UserCategoryRequest;
+import guide.me.server.payload.UserSetStartingPointRequest;
 import guide.me.server.repository.PlaceRepository;
+import guide.me.server.repository.StartingPointRepository;
 import guide.me.server.repository.UserRepository;
+import guide.me.server.util.UserProvidedAddressFixer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,6 +32,12 @@ public class GuideController {
 
     @Autowired
     private PlaceRepository placeRepository;
+
+    @Autowired
+    private StartingPointRepository startingPointRepository;
+
+    @Autowired
+    private UserProvidedAddressFixer addressFixer;
 
     @RequestMapping("/guide/places")
     public Set<PlaceDto> getGuidePlaces() {
@@ -44,6 +54,49 @@ public class GuideController {
         return userRepository.findById(userId)
                 .map(User::getCategories)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+    }
+
+    @RequestMapping("users/{userId}/starting-points")
+    public Set<StartingPoint> getUserStartingPoints(@PathVariable(name = "userId") Long userId) {
+        return userRepository.findById(userId)
+                .map(User::getStartingPoints)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+    }
+
+    @Transactional
+    @PostMapping("users/{userId}/starting-points")
+    public ResponseEntity<?> setUserStartingPoint(@Valid @RequestBody UserSetStartingPointRequest userSetStartingPointRequest) {
+
+        Long rqUserId = userSetStartingPointRequest.getUserId();
+        String rqStartingPointAddress = userSetStartingPointRequest.getAddress();
+
+        User user = userRepository.findById(rqUserId).orElseThrow(() -> new BadRequestException("No user with that id"));
+
+        rqStartingPointAddress = addressFixer.getFixedAddress(rqStartingPointAddress);
+
+        if(rqStartingPointAddress == null){
+            throw new BadRequestException("Wrong address!");
+        }
+
+        StartingPoint startingPoint = new StartingPoint();
+        startingPoint.setAddress(rqStartingPointAddress);
+        startingPoint.setActive(true);
+        startingPoint.setUser(user);
+
+        Optional<StartingPoint> optionalStartingPoint = startingPointRepository.findByUser(user);
+
+        if(optionalStartingPoint.isPresent()) {
+            startingPointRepository.deleteByUser(user);
+        }
+
+        StartingPoint result = startingPointRepository.save(startingPoint);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentContextPath().path("api/users/" + rqUserId + "/starting-points")
+                .buildAndExpand(result.getId()).toUri();
+
+        return ResponseEntity.created(location)
+                .body(new ApiResponse(true, "Starting point set successfully!"));
     }
 
     @RequestMapping("users/{userId}/categories/{categoryId}/places")

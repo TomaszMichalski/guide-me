@@ -5,15 +5,41 @@ import ReactTable from 'react-table';
 import "react-tabs/style/react-tabs.css";
 import 'react-table/react-table.css';
 import './Places.css';
-import Alert from "react-s-alert";
+import LoadingIndicator from "../common/LoadingIndicator";
 
 class CategoryTabPanel extends Component {
     constructor(props) {
         super(props);
         console.log(props);
+
+        this.state = {
+            loading: true
+        }
+
+        this.loadDistances = this.loadDistances.bind(this);
+        this.loadDistances();
+    }
+
+    loadDistances() {
+        const promises = this.props.places.map(place =>
+            getDistance(place.id, this.props.userId)
+        );
+
+        Promise.all(promises).then((results) => {
+            this.props.places.map(place =>
+                place.distance = results.find(result => place.id === result.placeTo.id).distance
+            );
+            this.setState({
+                loading: false
+            });
+        });
     }
 
     render() {
+        if (this.state.loading) {
+            return <LoadingIndicator/>
+        }
+
         const columns = [{
             Header: 'Name',
             accessor: 'name'
@@ -30,13 +56,6 @@ class CategoryTabPanel extends Component {
             Header: 'Distance',
             accessor: 'distance'
         }];
-        this.props.places.map(place =>
-            getDistance(place.id, this.props.userId)
-                .then(response => place.distance = response.distance
-                ).catch(error => {
-                    Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
-                })
-        );
         return (
             <ReactTable
                 data={this.props.places}

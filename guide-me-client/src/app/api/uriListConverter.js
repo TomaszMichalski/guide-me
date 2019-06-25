@@ -1,3 +1,6 @@
+/* eslint no-undef: "off"*/
+
+
 define(function() {
     'use strict';
 

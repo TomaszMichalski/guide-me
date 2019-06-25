@@ -1,0 +1,28 @@
+.starting-point-container {
+    padding-top: 30px;
+    margin-left: 40vw;
+    margin-right: 40vw;
+}
+
+.starting-point-input-container {
+    text-align: center;
+}
+
+
+.starting-point-input .starting-point-title {
+    font-weight: 500;
+    font-size: 18px;
+    padding: 10px;
+    margin-top: 5px;
+    display: flex;
+}
+
+
+.starting-point-input {
+    margin-left: 10px;
+    width: 200px;
+    height: 200px;
+    vertical-align: middle;
+    text-align: center;
+    border-radius: 50%;
+}

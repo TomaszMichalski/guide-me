@@ -1,0 +1,10 @@
+.flex-container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    align-content: space-between;
+}
+
+.flex-item {
+    margin: 10px;
+}

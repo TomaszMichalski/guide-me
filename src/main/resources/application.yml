@@ -17,8 +17,8 @@ spring:
       client:
         registration:
           facebook:
-            clientId: 300734334203766
-            clientSecret: bdbdb79adde87f96cf8ddd49f93b1305
+            # clientId: your-client-id
+            # clientSecret: your-client-secret
             redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
             - email
@@ -41,6 +41,6 @@ app:
     # redirectUri mentioned by the frontend client in the /oauth2/authorize request.
     # We're not using cookies because they won't work well in mobile clients.
     authorizedRedirectUris:
-    - http://localhost:8081/oauth2/redirect
+    - http://localhost:3000/oauth2/redirect
     - myandroidapp://oauth2/redirect
     - myiosapp://oauth2/redirect

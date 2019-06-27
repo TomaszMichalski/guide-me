@@ -5,7 +5,7 @@
 An app that lets you select an adress, some categories and see how far is your point from places 
 in those categories.
 E.g. you want to know which shopping mall in Cracow is closest to your home, just select your 
-starting point as your address, and check "Shopping mall" category, then under "places" you'll 
+address as your starting point, and check "Shopping mall" category, then under "places" you'll 
 see all Cracow shopping centres and their distances to you.
 
 ### What's inside?
